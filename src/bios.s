@@ -83,10 +83,10 @@ searchmsg: .byte "Searching for bootable media...", $d, $0
 .endproc
 
 .proc ld_bootsector
-    lda compid
-    jsr printhex
-    lda compid+1
-    jsr printhex
+    ; lda compid
+    ; jsr printhex
+    ; lda compid+1
+    ; jsr printhex
 
     lda #$00
     ldx #$10
@@ -98,10 +98,10 @@ searchmsg: .byte "Searching for bootable media...", $d, $0
     beq nodrive ; Zero sector size = no drive mapped here
     sta tmp1
 
-    ; lda $01
-    ; ldx $00
-    ; sta $266
-    ; stx $267
+    lda $01
+    ldx $00
+    sta $266
+    stx $267
 
     ldy #0
 
@@ -135,6 +135,13 @@ done:
     lda #<loadedmsg
     ldx #>loadedmsg
     jsr print
+
+    ldy #$fe
+    lda (ptr1),y
+    jsr printhex
+    iny
+    lda (ptr1),y
+    jsr printhex
     rts
 
 loadedmsg: .byte "Boot sector loaded", $d, $0
@@ -163,6 +170,11 @@ read_uuid_char:
     bra read_uuid_char
 
 done:
+    ; lda compid
+    ; jsr printhex
+    ; lda compid+1
+    ; jsr printhex
+
     lda #<compname
     ldx #>compname
     jsr print
