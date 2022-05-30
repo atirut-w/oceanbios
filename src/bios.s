@@ -155,7 +155,7 @@ read_name_done:
     ldy #0
 
 read_uuid_char:
-    lda $247
+    lda $246
     sta compid,y
     cpy #16
     beq done
