@@ -64,6 +64,7 @@ next_component:
 
     lda #0
     sta $246 ; Next component
+    jsr bell
     bra next_component
 
 yesboot:
@@ -82,7 +83,61 @@ searchmsg: .byte "Searching for bootable media...", $d, $0
 .endproc
 
 .proc ld_bootsector
+    lda compid
+    jsr printhex
+    lda compid+1
+    jsr printhex
+
+    lda #$00
+    ldx #$10
+    sta ptr1
+    stx ptr1+1 ; Address to load boot sector to
+
+    lda $262 ; Sector size in units of 256 bytes
+    cmp #0
+    beq nodrive ; Zero sector size = no drive mapped here
+    sta tmp1
+
+    ; lda $01
+    ; ldx $00
+    ; sta $266
+    ; stx $267
+
+    ldy #0
+
+load_part:
+    jsr bell
+    lda $263 ; R/W port
+    sta (ptr1),y
+    iny
+    cpy #$ff
+    bne load_part
+
+    ; Decrement sector size left to load
+    lda tmp1
+    cmp #0
+    beq done
+    dec
+    sta tmp1
+    bra load_part
+
+    ; Increment MSB of load address
+    lda #1
+    adc ptr1+1
+    sta ptr1+1
+    bra load_part
+
+nodrive:
     rts
+
+done:
+    jsr bell
+    lda #<loadedmsg
+    ldx #>loadedmsg
+    jsr print
+    rts
+
+loadedmsg: .byte "Boot sector loaded", $d, $0
 .endproc
 
 .proc read_component
@@ -91,7 +146,7 @@ searchmsg: .byte "Searching for bootable media...", $d, $0
 read_name_char:
     lda $246
     sta compname,y
-    cpy #16
+    cmp #0
     beq read_name_done
     iny
     bra read_name_char
@@ -108,12 +163,12 @@ read_uuid_char:
     bra read_uuid_char
 
 done:
-    ; lda #<compname
-    ; ldx #>compname
-    ; jsr print
-    ; lda #<newline
-    ; ldx #>newline
-    ; jsr print
+    lda #<compname
+    ldx #>compname
+    jsr print
+    lda #<newline
+    ldx #>newline
+    jsr print
 
     rts
 
