@@ -136,12 +136,10 @@ done:
     ldx #>loadedmsg
     jsr print
 
-    ldy #$fe
-    lda (ptr1),y
+    lda $11fe
     jsr printhex
-    iny
-    lda (ptr1),y
-    jsr printhex
+    lda $11ff
+    jsr printhex ; Verify if sector loaded correctly. Should be 0x55AA
     rts
 
 loadedmsg: .byte "Boot sector loaded", $d, $0
