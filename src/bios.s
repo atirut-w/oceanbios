@@ -88,9 +88,15 @@ searchmsg: .byte "Searching for bootable media...", $d, $0
     ; lda compid+1
     ; jsr printhex
 
+    lda #<$1000
+    ldx #>$1000
+    sta ptr1
+    stx ptr1+1 ; Pointer to load address
+
     lda $262 ; Sector size in units of 256 bytes
     cmp #0
     beq nodrive ; Zero sector size = no drive mapped here
+    sta tmp1 ; Save sector size
 
     lda #<$0001
     ldx #>$0001
@@ -99,21 +105,25 @@ searchmsg: .byte "Searching for bootable media...", $d, $0
 
     ldy #0
 
-load_part1:
+load_part:
     lda $263 ; R/W port
-    sta $1000,y
+    sta (ptr1),y
     iny
     cpy #0
-    bne load_part1
+    bne load_part
 
-load_part2:
-    lda $263 ; R/W port
-    sta $1100,y
-    iny
-    cpy #0
-    bne load_part2
+    ; Sectors left > 0?
+    lda tmp1
+    cmp #0
+    beq done
+    dec
+    sta tmp1 ; Decrement sectors left
 
-    bra done
+    ; Increment MSB of load address
+    lda ptr1+1
+    inc
+    sta ptr1+1
+    bra load_part ; Loop
 
 nodrive:
     rts
