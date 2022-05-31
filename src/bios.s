@@ -13,6 +13,7 @@ ptr4: .res 2
 
 compname: .res 16
 compid: .res 16
+boot_sig: .res 2
 
 .segment "ROM"
 
@@ -37,7 +38,7 @@ boottext:
 noboot:
     .byte $7
     .byte "No bootable media found", $d
-    .byte "Please insert a bootable disk and restart the system", $0
+    .byte "Insert a bootable disk and restart the system", $0
 .endproc
 
 .proc dummy_handler
@@ -54,6 +55,9 @@ noboot:
 
 next_component:
     jsr read_component
+    lda compid
+    cmp #$ff
+    beq noboot
     jsr isdrive
     cmp #0
     bne yesboot
@@ -64,7 +68,7 @@ next_component:
 
     lda #0
     sta $246 ; Next component
-    jsr bell
+    ; jsr bell
     bra next_component
 
 yesboot:
@@ -74,12 +78,43 @@ yesboot:
     stx $261
 
     jsr ld_bootsector
-    rts
+
+    ; Boot signature check
+    lda boot_sig
+    cmp #$55
+    bne noboot
+    lda boot_sig+1
+    cmp #$aa
+    bne noboot
+
+bootable:
+    lda #<bootmsg
+    ldx #>bootmsg
+    jsr print
+    lda compid
+    jsr printhex
+    lda compid+1
+    jsr printhex
+    lda #<dots
+    ldx #>dots
+    jsr print
+
+    jsr boot
 
 noboot:
     rts
 
 searchmsg: .byte "Searching for bootable media...", $d, $0
+bootmsg: .byte "Booting from ", $0
+dots: .byte "...", $d, $0
+.endproc
+
+.proc boot
+    ; Reset stack pointer
+    ldx #0
+    txs
+    ; Jump to boot sector
+    jmp $1000
 .endproc
 
 .proc ld_bootsector
@@ -119,18 +154,18 @@ nodrive:
     rts
 
 done:
-    jsr bell
-    lda #<loadedmsg
-    ldx #>loadedmsg
-    jsr print
+    ; jsr bell
+    ; lda #<loadedmsg
+    ; ldx #>loadedmsg
+    ; jsr print
 
     lda $11fe
-    jsr printhex
+    sta boot_sig
     lda $11ff
-    jsr printhex ; Print boot sector signature
+    sta boot_sig+1
     rts
 
-loadedmsg: .byte "Boot sector loaded", $d, $0
+; loadedmsg: .byte "Boot sector loaded", $d, $0
 .endproc
 
 .proc read_component
@@ -139,7 +174,7 @@ loadedmsg: .byte "Boot sector loaded", $d, $0
 read_name_char:
     lda $246
     sta compname,y
-    cmp #0
+    cmp #$00
     beq read_name_done
     iny
     bra read_name_char
@@ -161,12 +196,12 @@ done:
     ; lda compid+1
     ; jsr printhex
 
-    lda #<compname
-    ldx #>compname
-    jsr print
-    lda #<newline
-    ldx #>newline
-    jsr print
+    ; lda #<compname
+    ; ldx #>compname
+    ; jsr print
+    ; lda #<newline
+    ; ldx #>newline
+    ; jsr print
 
     rts
 
