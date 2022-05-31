@@ -55,7 +55,7 @@ noboot:
 
 next_component:
     jsr read_component
-    lda compid
+    lda compname
     cmp #$ff
     beq noboot
     jsr isdrive
@@ -176,6 +176,8 @@ read_name_char:
     sta compname,y
     cmp #$00
     beq read_name_done
+    cmp #$ff
+    beq done
     iny
     bra read_name_char
 
