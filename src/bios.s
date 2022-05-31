@@ -36,7 +36,6 @@ boot_sig: .res 2
 boottext:
     .byte "Ocean BIOS Copyright 2022 Atirut Wattanamongkol", $d, $d, $0
 noboot:
-    .byte $7
     .byte "No bootable media found", $d
     .byte "Insert a bootable disk and restart the system", $0
 .endproc
@@ -46,9 +45,9 @@ noboot:
 .endproc
 
 .proc tryboot
-    lda #<searchmsg
-    ldx #>searchmsg
-    jsr print
+    ; lda #<searchmsg
+    ; ldx #>searchmsg
+    ; jsr print
 
     lda #$ff
     sta $246 ; Reset component list cursor
@@ -88,16 +87,16 @@ yesboot:
     bne noboot
 
 bootable:
-    lda #<bootmsg
-    ldx #>bootmsg
-    jsr print
-    lda compid
-    jsr printhex
-    lda compid+1
-    jsr printhex
-    lda #<dots
-    ldx #>dots
-    jsr print
+    ; lda #<bootmsg
+    ; ldx #>bootmsg
+    ; jsr print
+    ; lda compid
+    ; jsr printhex
+    ; lda compid+1
+    ; jsr printhex
+    ; lda #<dots
+    ; ldx #>dots
+    ; jsr print
 
     jsr boot
 
@@ -113,7 +112,8 @@ dots: .byte "...", $d, $0
     ; Reset stack pointer
     ldx #0
     txs
-    ; Jump to boot sector
+    ; Bell and jump to boot sector
+    jsr bell
     jmp $1000
 .endproc
 
