@@ -1,14 +1,20 @@
+CC65 = cc65
 CA65 = ca65
 LD65 = ld65
 
-build: assemble link
+build: compile assemble link
+
+compile:
+	mkdir -p build/s
+	find src/ -name '*.s' -exec cp {} build/s/ \;
+	find src/ -name '*.c' -exec sh -c '$(CC65) -T -t none --cpu 6502 -Isrc/include {} -o build/s/$$(basename {} .c).s' \;
 
 assemble:
-	mkdir -p build
-	$(CA65) --cpu 65c02 src/bios.s -o build/bios.o
+	mkdir -p build/o
+	for f in build/s/*.s; do $(CA65) --cpu 6502 $$f -o build/o/`basename $$f .s`.o; done
 
 link:
-	$(LD65) -C ocmos.cfg -m build/bios.map -o build/bios.bin build/bios.o
+	$(LD65) build/o/*.o -o build/bios.bin -m build/bios.map -C ocmos.cfg c64.lib
 
 clean:
-	rm -rf build/*
+	rm -rf build/o build/s
