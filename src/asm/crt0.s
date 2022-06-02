@@ -3,8 +3,8 @@
 .importzp sp
 
 .proc __STARTUP__
-    lda #$00
-    ldx #$ef
+    lda #$ff
+    ldx #$2f
     sta sp
     stx sp+1
 
@@ -19,5 +19,5 @@ hang: jmp hang
 .segment "VECTORS"
 
 .addr interrupt
-.addr _main
+.addr __STARTUP__
 .addr interrupt

@@ -1,10 +1,5 @@
 #include "peekpoke.h"
 
-void putchar(const char c)
-{
-    POKE(0x2ff, c);
-}
-
 void print(const char* str) {
     while (*str) {
         POKE(0x2ff, *str++);
@@ -12,6 +7,7 @@ void print(const char* str) {
 }
 
 void main() {
-    putchar(0); // Initialize the screen
+    POKE(0x2ff, 0); // Initialize the screen
+    print("Ocean BIOS Copyright 2022 Atirut Wattanamongkol\r\r");
     while (1);
 }

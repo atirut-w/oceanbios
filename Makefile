@@ -7,11 +7,11 @@ build: compile assemble link
 compile:
 	mkdir -p build/s
 	find src/ -name '*.s' -exec cp {} build/s/ \;
-	find src/ -name '*.c' -exec sh -c '$(CC65) -T -t none --cpu 6502 -Isrc/include {} -o build/s/$$(basename {} .c).s' \;
+	find src/ -name '*.c' -exec sh -c '$(CC65) -T -t none --cpu 65c02 -Osir -Isrc/include {} -o build/s/$$(basename {} .c).s' \;
 
 assemble:
 	mkdir -p build/o
-	for f in build/s/*.s; do $(CA65) --cpu 6502 $$f -o build/o/`basename $$f .s`.o; done
+	for f in build/s/*.s; do $(CA65) --cpu 65c02 $$f -o build/o/`basename $$f .s`.o; done
 
 link:
 	$(LD65) build/o/*.o -o build/bios.bin -m build/bios.map -C ocmos.cfg c64.lib
