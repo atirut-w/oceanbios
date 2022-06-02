@@ -5,7 +5,6 @@
 
 void boot() {
     putchar(7); // Beep
-    print("Booting...\r");
 }
 
 void tryboot() {
@@ -27,8 +26,8 @@ void tryboot() {
 
     // Verify for boot signature
     if (*(short*)(ldptr - 2) == 0xaa55) {
-        print("Valid boot signature found\r");
-        // boot();
+        // print("Valid boot signature found\r");
+        boot();
     }
 }
 
