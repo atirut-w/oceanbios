@@ -59,6 +59,7 @@ int main() {
     print("Ocean BIOS Copyright 2022 Atirut Wattanamongkol\r\r");
 
     while (1) {
+        // The code sometimes fail to validate the boot signature so we'll just keep trying
         finddrive();
     }
 
