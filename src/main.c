@@ -56,6 +56,7 @@ void finddrive() {
 
 int main() {
     putchar(0); // Initialize the terminal.
+    putchar(6); // Cycle to next supported terminal size.
     print("Ocean BIOS Copyright 2022 Atirut Wattanamongkol\r\r");
 
     for (int i = 0; i < 3; i++) {
