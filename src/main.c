@@ -63,8 +63,5 @@ int main() {
     }
 
     print("No bootable drive found.\rInsert a drive with a valid boot sector and restart the system.\r");
-
-    print("\rOk!");
-
     return 0;
 }
