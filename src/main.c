@@ -3,8 +3,6 @@
 #include <string.h>
 #include "peekpoke.h"
 
-extern _Noreturn void boot();
-
 void tryboot() {
     char sectorsize = PEEK(0x262); // In units of 256 bytes
     if (sectorsize == 0) {
@@ -24,8 +22,10 @@ void tryboot() {
 
     // Verify for boot signature
     if (*(short*)(ldptr - 2) == 0xaa55) {
-        print("Valid boot signature found\r");
-        boot();
+        putchar(7); // Beep
+
+        // (*(void(*)())0x1000)();
+        asm volatile ("JMP $1000");
     }
 }
 
@@ -37,11 +37,11 @@ void finddrive() {
 
     while (comp.name[0] != 0xff) {
         if (memcmp(comp.name, "drive", 6) == 0) {
-            print("Checking drive ");
-            for (int i = 0; i < 2; i++) {
-                printbyte(comp.uuid[i]);
-            }
-            print("\r");
+            // print("Checking drive ");
+            // for (int i = 0; i < 2; i++) {
+            //     printbyte(comp.uuid[i]);
+            // }
+            // print("\r");
 
             // Map the drive to the first drive controller
             POKE(0x260, comp.uuid[0]);
@@ -58,7 +58,9 @@ int main() {
     putchar(0); // Initialize the terminal.
     print("Ocean BIOS Copyright 2022 Atirut Wattanamongkol\r\r");
 
-    finddrive();
+    while (1) {
+        finddrive();
+    }
 
     print("\rOk!");
 
