@@ -58,10 +58,11 @@ int main() {
     putchar(0); // Initialize the terminal.
     print("Ocean BIOS Copyright 2022 Atirut Wattanamongkol\r\r");
 
-    while (1) {
-        // The code sometimes fail to validate the boot signature so we'll just keep trying
-        finddrive();
+    for (int i = 0; i < 3; i++) {
+        finddrive(); // The code sometimes fail to validate the boot signature so retry a few times.
     }
+
+    print("No bootable drive found.\rInsert a drive with a valid boot sector and restart the system.\r");
 
     print("\rOk!");
 
