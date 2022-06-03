@@ -3,9 +3,7 @@
 #include <string.h>
 #include "peekpoke.h"
 
-void boot() {
-    putchar(7); // Beep
-}
+extern _Noreturn void boot();
 
 void tryboot() {
     char sectorsize = PEEK(0x262); // In units of 256 bytes
@@ -26,7 +24,7 @@ void tryboot() {
 
     // Verify for boot signature
     if (*(short*)(ldptr - 2) == 0xaa55) {
-        // print("Valid boot signature found\r");
+        print("Valid boot signature found\r");
         boot();
     }
 }

@@ -10,7 +10,7 @@ SECTIONS {
 __rc0 = 0x05;
 INCLUDE imag-regs.ld
 
-entry_point = 0x1000;
+boot = 0x1000;
 
 OUTPUT_FORMAT {
     FULL(rom)
