@@ -63,7 +63,9 @@ int main() {
     putchar(6); // Cycle to next supported terminal size.
     print("Ocean BIOS Copyright 2022 Atirut Wattanamongkol\r\r");
 
-    finddrive();
+    for (int i = 0; i < 2; i++) {
+        finddrive(); // Try at least two times. First time sometimes doesn't work for some reason.
+    }
 
     print("No bootable drive found.\rInsert a drive with a valid boot sector and restart the system.\r");
     return 0;
