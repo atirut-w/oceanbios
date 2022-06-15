@@ -22,7 +22,7 @@ jobs:
         run: tar -xJf llvm-mos-linux.tar.xz
       
       - name: Add the LLVM-MOS directory to the PATH
-        run: export PATH=$PATH:$GITHUB_WORKSPACE/llvm-mos # Does this even work?
+        run: export PATH=$PATH:$GITHUB_WORKSPACE/llvm-mos/bin # Does this even work?
       
       - name: Build the projct
         run: make compile
