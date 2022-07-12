@@ -126,6 +126,7 @@ int main()
         }
     }
 
+    putchar(7);
     print("No bootable drive found.\rInsert a drive with a valid boot sector and restart the system.\r");
     return 0;
 }
