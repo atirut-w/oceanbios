@@ -1,33 +1,36 @@
 #include "component.h"
 #include "peekpoke.h"
+#include "terminal.h"
 
-void complist_start()
+int list_components(component_t *buf)
 {
+    int count;
+
     POKE(COMPLIST_PORT, 0xff);
-}
-
-void read_component(component_t *comp)
-{
-    for (int i = 0; i < 16; i++)
+    for (count = 0; count < MAX_COMPONENTS; count++)
     {
-        comp->name[i] = PEEK(COMPLIST_PORT);
-        if (comp->name[i] == 0)
+        for (int i = 0; i < 16; i++)
         {
-            break;
+            buf[count].name[i] = PEEK(COMPLIST_PORT);
+            if (buf[count].name[i] == 0)
+            {
+                break;
+            }
+            else if (buf[count].name[i] == 0xff)
+            {
+                return count;
+            }
         }
-        else if (comp->name[i] == 0xff)
+        print(buf[count].name);
+        print("\r");
+
+        for (int i = 0; i < 16; i++)
         {
-            return;
+            buf[count].uuid[i] = PEEK(COMPLIST_PORT);
         }
+
+        POKE(COMPLIST_PORT, 0);
     }
 
-    for (int i = 0; i < 16; i++)
-    {
-        comp->uuid[i] = PEEK(COMPLIST_PORT);
-    }
-}
-
-void next_component()
-{
-    POKE(COMPLIST_PORT, 0);
+    return count;
 }
