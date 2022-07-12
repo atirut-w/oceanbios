@@ -21,8 +21,6 @@ int list_components(component_t *buf)
                 return count;
             }
         }
-        // print(buf[count].name);
-        // print("\r");
 
         for (int i = 0; i < 16; i++)
         {
