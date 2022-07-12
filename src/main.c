@@ -4,43 +4,51 @@
 #include "peekpoke.h"
 #include <stdbool.h>
 
-typedef struct {
-    volatile char uuid[2]; // First two byte of the UUID of the drive we want to do stuff with
-    volatile char sectorsize; // Size of a sector in units of 256 bytes
-    volatile char rw; // R/W port
+typedef struct
+{
+    volatile char uuid[2];      // First two byte of the UUID of the drive we want to do stuff with
+    volatile char sectorsize;   // Size of a sector in units of 256 bytes
+    volatile char rw;           // R/W port
     volatile short sectorcount; // Number of sectors on the drive
-    volatile short rwsector; // Current sector we are reading or writing to
+    volatile short rwsector;    // Current sector we are reading or writing to
 } diskslot_t;
 
-diskslot_t* disk = (diskslot_t*)0x260;
+diskslot_t *disk = (diskslot_t *)0x260;
 
 // Load the boot sector of a disk into memory starting from 0x1000
-void load_bs() {
-    if (disk->sectorsize < 2) {
+void load_bs()
+{
+    if (disk->sectorsize < 2)
+    {
         return; // Must be at least 512 bytes
     }
 
     disk->rwsector = 1; // Sector starts at 1 in OpenComputers
-    for (int i = 0; i < 512; i++) {
+    for (int i = 0; i < 512; i++)
+    {
         POKE(0x1000 + i, disk->rw);
     }
 }
 
 // Look for disks with a valid boot signature
-bool find_disk() {
+bool find_disk()
+{
     component_t comp;
     complist_start();
     read_component(&comp);
 
-    while (comp.name[0] != 0xff) {
+    while (comp.name[0] != 0xff)
+    {
         // print(comp.name);
         // print("\r");
-        if (memcmp(comp.name, "drive", 6) == 0) {
+        if (memcmp(comp.name, "drive", 6) == 0)
+        {
             disk->uuid[0] = comp.uuid[0];
             disk->uuid[1] = comp.uuid[1];
 
             load_bs();
-            if (*(short*)0x11fe == 0xaa55) {
+            if (*(short *)0x11fe == 0xaa55)
+            {
                 return true;
             }
         }
@@ -52,15 +60,18 @@ bool find_disk() {
     return 0;
 }
 
-int main() {
+int main()
+{
     putchar(0); // Initialize the terminal
     putchar(6); // Cycle to next supported terminal size
     print("Ocean BIOS Copyright 2022 Atirut Wattanamongkol\r\r");
 
-    for (int i = 0; i < 2; i++) {
-        if (find_disk()) {
-            putchar(7); // Beep
-            asm ("jmp $1000"); // First try sometimes fail for some reason
+    for (int i = 0; i < 2; i++)
+    {
+        if (find_disk())
+        {
+            putchar(7);       // Beep
+            asm("jmp $1000"); // First try sometimes fail for some reason
         }
     }
 
