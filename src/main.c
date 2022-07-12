@@ -64,7 +64,7 @@ int main()
         if (find_disk())
         {
             putchar(7); // Beep
-            asm("ldx #0");
+            asm("ldx #ff");
             asm("txs");       // Reset the stack pointer
             asm("jmp $1000"); // Jump to the boot sector
         }
