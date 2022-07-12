@@ -8,3 +8,20 @@ When there are no bootable disks, the BIOS hangs with a message telling you to r
 
 ## Disk images
 Disk image created by some utilities, such as `mkfs.fat`, always have a boot sector signature. If you don't want the BIOS to boot a disk image, you can simply remove the said signature before compressing them for OpenComputers.
+
+## Building
+---
+
+Before building this project, make sure you have the [LLVM-MOS SDK](https://github.com/llvm-mos/llvm-mos-sdk/releases) installed for compiling 6502 binaries.
+
+---
+
+Run the following commands from the cloned repository:
+
+```bash
+mkdir build && cd build
+cmake ..
+make
+```
+
+You should now have two built files, `bios.bin` and `bios.bin.elf`. The former is a raw binary file for flashing onto an EEPROM, and the latter contains the BIOS in ELF format.
