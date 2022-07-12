@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "terminal.h": "c",
-        "peekpoke.h": "c"
-    },
-    "yaml.schemas": {
-        "https://json.schemastore.org/github-workflow.json": "file:///home/atirut/Desktop/MultiMC/instances/OCMOS/.minecraft/saves/OpenComputers/opencomputers/4593fc2c-6088-4648-b2f7-2bda09411feb/home/oceanbios/.github/workflows/build.yml"
-    }
-}
