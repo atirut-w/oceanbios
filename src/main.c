@@ -64,26 +64,66 @@ component_t components[MAX_COMPONENTS];
 int component_count;
 #define REFRESH_COMPONENTS() component_count = list_components(components)
 
+typedef struct disk
+{
+    char uuid[2];
+    char sectorsize;
+    char rw;
+    short sectorcount;
+    short rwsector;
+} disk_t;
+
+disk_t *disk = (disk_t *)0x260;
+
+void load_bs()
+{
+    if (disk->sectorsize < 2)
+    {
+        return; // Must be at least 512 bytes
+    }
+
+    disk->rwsector = 1; // Sector starts at 1 in OpenComputers
+    for (int i = 0; i < 512; i++)
+    {
+        POKE(0x1000 + i, disk->rw);
+    }
+}
+
+bool find_disk()
+{
+    for (int i = 0; i < component_count; i++)
+    {
+        if (memcmp(components[i].name, "drive", 6) == 0)
+        {
+            disk->uuid[0] = components[i].uuid[0];
+            disk->uuid[1] = components[i].uuid[1];
+
+            load_bs();
+            if (*(short *)0x11fe == 0xaa55)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 int main()
 {
     putchar(0); // Initialize the terminal
     putchar(6); // Cycle to next supported terminal size
     print("Ocean BIOS Copyright 2022 Atirut Wattanamongkol\r\r");
 
-    component_count = list_components(components);
-    print("\r$");
-    printbyte(component_count);
-    print(" components found\r");
-
-    for (int i = 0; components[i].name[0] != 0xff; i++)
+    REFRESH_COMPONENTS();
+    for (int i = 0; i < 2; i++) // Retry at least twice
     {
-        for (int j = 0; j < 16; j++)
+        if (find_disk())
         {
-            printbyte(components[i].uuid[j]);
+            putchar(7); // Beep
+            asm ("ldx #0");
+            asm ("txs"); // Reset the stack pointer
+            asm ("jmp $1000"); // Jump to the boot sector
         }
-        print("  ");
-        print(components[i].name);
-        print("\r");
     }
 
     print("No bootable drive found.\rInsert a drive with a valid boot sector and restart the system.\r");
