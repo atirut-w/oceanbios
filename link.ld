@@ -1,5 +1,5 @@
 MEMORY {
-    ram (w) : ORIGIN = 0x3000, LENGTH = 0xd000
+    ram (w) : ORIGIN = 0x1200, LENGTH = 0x400
     rom (r) : ORIGIN = 0xf000, LENGTH = 0x0ffc
 }
 
