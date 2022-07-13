@@ -9,7 +9,7 @@ SECTIONS {
 
 __rc0 = 0x05;
 INCLUDE imag-regs.ld
-__stack = 0x2fff;
+__stack = 0x2000;
 
 OUTPUT_FORMAT {
     FULL(rom)
