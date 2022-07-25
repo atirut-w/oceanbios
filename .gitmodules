@@ -1,0 +1,3 @@
+[submodule "libocmos"]
+	path = libocmos
+	url = https://github.com/atirut-w/libocmos
