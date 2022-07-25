@@ -1,33 +1,20 @@
-#include "component.h"
-#include "peekpoke.h"
-#include "terminal.h"
+#include "ocmos/component.h"
 
 int list_components(component_t *buf)
 {
     int count;
 
-    POKE(COMPLIST_PORT, 0xff);
-    for (count = 0; count < MAX_COMPONENTS; count++)
+    start_component_list();
+    for (count = 0; count < 16; count++)
     {
-        for (int i = 0; i < 16; i++)
+        read_component(&buf[count]);
+
+        if (buf[count].name[0] == 0xff)
         {
-            buf[count].name[i] = PEEK(COMPLIST_PORT);
-            if (buf[count].name[i] == 0)
-            {
-                break;
-            }
-            else if (buf[count].name[i] == 0xff)
-            {
-                return count;
-            }
+            return count;
         }
 
-        for (int i = 0; i < 16; i++)
-        {
-            buf[count].uuid[i] = PEEK(COMPLIST_PORT);
-        }
-
-        POKE(COMPLIST_PORT, 0);
+        next_component();
     }
 
     return count;
