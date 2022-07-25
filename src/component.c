@@ -1,11 +1,12 @@
 #include "ocmos/component.h"
+#include "component.h"
 
 int list_components(component_t *buf)
 {
     int count;
 
     start_component_list();
-    for (count = 0; count < 16; count++)
+    for (count = 0; count < MAX_COMPONENTS; count++)
     {
         read_component(&buf[count]);
 
