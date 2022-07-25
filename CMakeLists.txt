@@ -7,6 +7,8 @@ project(OceanBIOS)
 add_executable(bios.bin src/main.c src/component.c src/terminal.c)
 configure_file(link.ld link.ld COPYONLY)
 
+add_subdirectory(libocmos)
+
 target_compile_options(bios.bin PRIVATE -O3)
 target_include_directories(bios.bin PRIVATE src/include)
-target_link_libraries(bios.bin init-stack exit-loop)
+target_link_libraries(bios.bin init-stack exit-loop ocmos)
